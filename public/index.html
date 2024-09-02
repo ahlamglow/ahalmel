@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Data Encryption</title>
+</head>
+
+<body>
+    <h1>Enter User Data</h1>
+    <form id="dataForm">
+        <textarea id="dataInput" rows="10" cols="50" placeholder='Enter data in JSON format, e.g., [{"name": "Amélie", "email": "amelie@example.com", "Tel": "0777777778"}]'></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>Encrypted Data</h2>
+    <pre id="encryptedData"></pre>
+
+    <h2>Decrypted Data</h2>
+    <pre id="decryptedData"></pre>
+
+    <script>
+        document.getElementById('dataForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const dataInput = document.getElementById('dataInput').value;
+
+            try {
+                const response = await fetch('/api/encrypt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        data: JSON.parse(dataInput)
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('encryptedData').textContent = JSON.stringify(result.encryptedData, null, 2);
+                    document.getElementById('decryptedData').textContent = JSON.stringify(result.decryptedData, null, 2);
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to process data');
+            }
+        });
+    </script>
+</body>
+
+</html>
